@@ -243,19 +243,6 @@ function botChooseAndAct(room, seatIndex) {
     afterAction(room, seatIndex, false);
     return;
   }
-  while (g.boneyard.length > 0) {
-    hand.push(g.boneyard.pop());
-    const t = hand[hand.length - 1];
-    const m = tileMatchesEnds(g.chain, t);
-    if (m.left || m.right) {
-      const side = m.left ? "left" : "right";
-      placeTile(g.chain, t, side);
-      hand.pop();
-      g.passStreak = 0;
-      afterAction(room, seatIndex, false);
-      return;
-    }
-  }
   g.passStreak++;
   afterAction(room, seatIndex, true);
 }
@@ -389,15 +376,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("draw_tile", () => {
-    const code = socketRoom[socket.id];
-    const room = rooms[code];
-    if (!room || !room.started || room.matchOver) return;
-    const seatIndex = room.seats.findIndex((s) => s && s.socketId === socket.id);
-    if (seatIndex === -1 || seatIndex !== room.game.currentSeat) return;
-    const g = room.game;
-    if (handHasPlayable(g.chain, g.players[seatIndex].hand) || g.boneyard.length === 0) return;
-    g.players[seatIndex].hand.push(g.boneyard.pop());
-    sendFullStateToAll(room);
+    // Drawing is disabled — Domino World uses Block rules (deal once, no draw pile).
   });
 
   socket.on("pass_turn", () => {
@@ -407,7 +386,7 @@ io.on("connection", (socket) => {
     const seatIndex = room.seats.findIndex((s) => s && s.socketId === socket.id);
     if (seatIndex === -1 || seatIndex !== room.game.currentSeat) return;
     const g = room.game;
-    if (handHasPlayable(g.chain, g.players[seatIndex].hand) || g.boneyard.length > 0) return;
+    if (handHasPlayable(g.chain, g.players[seatIndex].hand)) return;
     g.passStreak++;
     afterAction(room, seatIndex, true);
   });
