@@ -1,0 +1,16 @@
+{
+  "name": "domino-world-server",
+  "version": "1.0.0",
+  "description": "Domino World online multiplayer server (rooms + matchmaking)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "socket.io": "^4.8.3"
+  }
+}
